@@ -1,5 +1,6 @@
 var colors=["yellow","red","orange","blue", "purple", "green"];
 var currentColor = "white";
+var enable = false;
 
 function createPaint(){
     var first=document.createElement('div');
@@ -10,8 +11,6 @@ function createPaint(){
     createColorPallet();
     eraser();
     createSquars();
-
-
 }
 createPaint();
 
@@ -38,8 +37,8 @@ function eraser(){
     erase.id="button";
     erase.style="width:50px; " ;
     erase.addEventListener("click", white);
-
 }
+
 function white(){
     currentColor = "white";
 }
@@ -62,6 +61,7 @@ function createSquars(){
             square.className= "square";
             square.y= i;
             square.x= j;
+            square.id= j + "-" + i;
             document.getElementById("mainSquare").appendChild(square);
             square.style= "height:10px; width:10px;  display:inline-block;" ;
             square.addEventListener("mousedown", start);
@@ -70,7 +70,6 @@ function createSquars(){
         }
     }
 }
-var enable = false;
 
 function start(){
     enable=true;
@@ -116,14 +115,18 @@ function saveGrid(){
     var allsquares = document.getElementsByClassName("square");
     for (var z=0; z<allsquares.length; z++){
         var currSquare = allsquares[z];
+        if (currSquare.style.backgroundColor=="white"){
+            continue;
+        }
+        else if(currSquare.style.backgroundColor!="" ){
         var saveObject = {};
         saveObject.x = currSquare.x;
         saveObject.y = currSquare.y;
-        saveObject.color =  currSquare.style.backgroundColor;
+        saveObject.id = currSquare.id;
+        saveObject.color = currSquare.style.backgroundColor;
         savedArray.push(saveObject);
-
+        }
     }
-
     localStorage.setItem(gridName, JSON.stringify(savedArray));
     alert("grid Saved");
 }
@@ -144,13 +147,12 @@ function loadGrid(){
       }
     var gridName= prompt("what grid name do you want to upload? "+ localKeys);
     var loadedGrid = localStorage.getItem(gridName);
-
+    
     var allsquares = document.getElementsByClassName("square");
     var allData = JSON.parse(loadedGrid);
-    for (var i = 0; i < allData.length-1 ; i++) {
+    for (var i = 0; i < allData.length ; i++) {
         var curSquare = allData[i];
-        var currSquareDiv = allsquares[i];
-        console.log(curSquare.color);
+        var currSquareDiv = document.getElementById(curSquare.x + "-" + curSquare.y);
         currSquareDiv.style.backgroundColor = curSquare.color ;
     }
 

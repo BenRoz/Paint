@@ -1,6 +1,7 @@
 var colors=["yellow","red","orange","blue", "purple", "green"];
 var currentColor = "white";
 var enable = false;
+var thickness = false;
 
 function createPaint(){
     var first=document.createElement('div');
@@ -75,9 +76,27 @@ function start(){
     enable=true;
 }
 function paintSquare(e){
-    if(enable){
-        this.style.backgroundColor = currentColor;
+    if (enable && thickness==false){
+         this.style.backgroundColor = currentColor;
     }
+
+   else if(enable && thickness){
+        this.style.backgroundColor = currentColor;
+        var MinusX = document.getElementById(this.x -1 + "-" + this.y);
+        var Plusx = document.getElementById(this.x +1 + "-" + this.y);
+        var MinusY = document.getElementById(this.x + "-" + this.y +1);
+        var PlusY = document.getElementById(this.x + "-" + this.y -1);
+        var MinPlus = [ MinusX, Plusx , MinusY , PlusY ];
+        for (var i=0; i<MinPlus.length; i++){
+              if (MinPlus[i]!=null && MinPlus[i] != undefined){
+                    MinPlus[i].style.backgroundColor =currentColor;
+              }
+              else{
+                continue;
+              }
+
+        }
+   }
 }
 function stop(){
     enable=false;
@@ -108,6 +127,27 @@ var reset = document.createElement('button');
     document.getElementById("SaveDiv").appendChild(reset);
     document.getElementById("reset").innerHTML="Reset" ;
     reset.addEventListener("click", clear);
+
+var thick = document.createElement('button');
+    thick.id = "plus";
+    thick.style="width:80px; height:40px; margin:5px 5px; " ;
+    document.getElementById("SaveDiv").appendChild(thick);
+    document.getElementById("plus").innerHTML="+" ;
+    thick.addEventListener("click", thicken);
+
+function thicken(){
+    thickness=true;
+}
+var notThick = document.createElement('button');
+    notThick.id = "normal";
+    notThick.style="width:80px; height:40px; margin:5px 5px; " ;
+    document.getElementById("SaveDiv").appendChild(notThick);
+    document.getElementById("normal").innerHTML="-" ;
+    notThick.addEventListener("click", notThicken);
+
+function notThicken(){
+    thickness=false;
+}
 
 function saveGrid(){
     var savedArray = [];
@@ -147,7 +187,7 @@ function loadGrid(){
       }
     var gridName= prompt("what grid name do you want to upload? "+ localKeys);
     var loadedGrid = localStorage.getItem(gridName);
-    
+
     var allsquares = document.getElementsByClassName("square");
     var allData = JSON.parse(loadedGrid);
     for (var i = 0; i < allData.length ; i++) {
